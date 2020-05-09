@@ -55,6 +55,8 @@
             (define-key map (kbd "s-m") 'sclang-helper-show-meter)
             (define-key map (kbd "s-f") 'sclang-helper-show-freqscope)
             (define-key map (kbd "s-n") 'sclang-helper-show-tree)
+            (define-key map (kbd "s-.") 'sclang-main-stop)
+            (define-key map (kbd "s-d") 'sclang-find-help-in-gui)
             map))
 
 ;;;###autoload
