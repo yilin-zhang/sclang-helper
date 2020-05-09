@@ -15,9 +15,6 @@
     (when string
       (sclang-eval-string string (not silent-p)))
     (pulse-momentary-highlight-one-line (point)) ;; highlighting
-    (and sclang-eval-line-forward
-         (/= (line-end-position) (point-max))
-         (forward-line 1))
     string))
 
 (defun sclang-helper-eval-region (&optional silent-p)
