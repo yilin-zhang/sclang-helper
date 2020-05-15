@@ -32,32 +32,47 @@
       (sclang-helper-eval-region silent-p)
     (sclang-helper-eval-line silent-p)))
 
-;; TODO:
-;; 1. This function should also detect if there's no extra characters around
-;; the outermost parentheses.
-;; 2. It's not functional when the prentheses don't match.
+;; TODO: It's not functional when the prentheses don't match.
 (defun sclang-helper-eval-paren-region (&optional silent-p)
-  "Execute the region inside the outermost parentheses."
+  "Execute the region inside the outermost parentheses.
+Return t if the evaluation happens, nil if it doens't happen."
   (interactive "P")
+
+  (defun check-char-text (char)
+    "Check if the char is normal text"
+    (if (and (characterp char)
+             (not (member (get-char-code-property char 'general-category) '(Zs Cc))))
+        t
+      nil))
+
   (save-excursion
+    ;; iteratively check if there's an upper level left parenthesis
     (let ((paren-matched nil))
       (while
           (condition-case nil
               (progn
-                (backward-up-list)
                 (if (equal (char-to-string (char-after)) "(")
                     (setq paren-matched t)
                   (setq paren-matched nil))
+                (backward-up-list)
                 t)
             (error nil)))
       (if paren-matched
           (progn
-            (set-mark (point))
-            (forward-list)
-            (setq mark-active t)
-            (sclang-helper-eval-region-or-line silent-p)
-            (setq mark-active nil)
-            t)
+            (let ((point-paren-1 (point))
+                  (point-paren-2 (progn (forward-list) (point))))
+              ;; check if there's nothing around the paired parentheses
+              (if (or (check-char-text (char-before point-paren-1))
+                      ;; after calling forward-list, point-paren-2 is actually the char after
+                      ;; the right parenthesis
+                      (check-char-text (char-after point-paren-2)))
+                  nil
+                (progn
+                  (set-mark point-paren-1)
+                  (setq mark-active t)
+                  (sclang-helper-eval-region-or-line silent-p)
+                  (setq mark-active nil)
+                  t))))
         nil))))
 
 (defun sclang-helper-auto-eval (&optional silent-p)
