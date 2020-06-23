@@ -101,15 +101,13 @@ Return t if the evaluation happens, nil if it doens't happen."
   :lighter " sclang-helper"
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "<s-return>") 'sclang-helper-auto-eval)
+            (define-key map (kbd "<C-return>") 'sclang-helper-auto-eval)
             (define-key map (kbd "s-m") 'sclang-helper-show-meter)
             (define-key map (kbd "s-f") 'sclang-helper-show-freqscope)
             (define-key map (kbd "s-n") 'sclang-helper-show-tree)
             (define-key map (kbd "s-.") 'sclang-main-stop)
             (define-key map (kbd "s-d") 'sclang-find-help-in-gui)
             map))
-
-;;;###autoload
-(add-hook 'sclang-mode-hook 'sclang-helper-mode)
 
 (provide 'sclang-helper)
 
